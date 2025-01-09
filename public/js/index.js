@@ -73,10 +73,6 @@
 
 function startAutoNext() {
     ean.onnext = refreshPostPreview;
-    const controlsContainer = document.querySelector(".autoNextCurrentPostFooter ");
-    controlsContainer.querySelector("input.previousPost").disabled = ean.previousPost ? true : false;
-    controlsContainer.querySelector("input.nextPost").disabled = ean.nextPost ? true : false;
-    controlsContainer.querySelector("input.pauseAutoNext").disabled = false;
     ean.start();
 }
 
@@ -84,48 +80,20 @@ function refreshPostPreview() {
     const previousPost = ean.previousPost;
     const currentPost = ean.currentPost;
     const nextPost = ean.nextPost;
+
+    const controlsContainer = document.querySelector(".autoNextCurrentPostFooter ");
+    controlsContainer.querySelector("input.previousPost").disabled = previousPost ? false : true;
+    controlsContainer.querySelector("input.nextPost").disabled = nextPost ? false : true;
+    controlsContainer.querySelector("input.pauseAutoNext").disabled = false;
+
     const previewContainer = document.querySelector(".autoNextPostPreview");
     previewContainer.innerHTML = "";
-    let container;
     if(!currentPost) {
         document.querySelector(".errors").innerText = "";
         return ean.stop();
     }
-
-    switch(currentPost.file.ext) {
-        case 'png':
-        case 'jpg':
-        case 'gif':
-            container = document.createElement("img");
-            container.src = currentPost.file.url;
-            container.style.opacity = 0;
-            container.onload = function() {
-                this.style.opacity = 1;
-            }
-        break;
-        case 'webm':
-            container = document.createElement("video");
-            container.type = "video/webm";
-            container.autoplay = true;
-            container.loop = !ean.waitVideoEnd;
-            container.muted = ean.muteVideos;
-            container.controls = ean.showControls;
-            let source = document.createElement("source");
-            source.src = currentPost.file.url;
-            container.appendChild(source);
-            container.style.opacity = 0;
-            container.onloadeddata = function() {
-                this.style.opacity = 1;
-            }
-            container.onended = function() {
-                if(ean.waitVideoEnd && ean.status === 'waiting') {
-                    this.style.opacity = 0;
-                    ean.start();
-                }
-            }
-        break;
-    }
-    previewContainer.appendChild(container);
+    const preview = genPreview(currentPost);
+    previewContainer.appendChild(preview);
     resizePreview();
 }
 
@@ -139,5 +107,39 @@ function resizePreview() {
 }
 
 function genPreview(post) {
-
+    let container;
+    switch(post.file.ext) {
+        case 'png':
+        case 'jpg':
+        case 'gif':
+            container = document.createElement("img");
+            container.src = post.file.url;
+            container.style.opacity = 0;
+            container.onload = function() {
+                this.style.opacity = 1;
+            }
+        break;
+        case 'webm':
+            container = document.createElement("video");
+            container.type = "video/webm";
+            container.autoplay = true;
+            container.loop = !ean.waitVideoEnd;
+            container.muted = ean.muteVideos;
+            container.controls = ean.showControls;
+            let source = document.createElement("source");
+            source.src = post.file.url;
+            container.appendChild(source);
+            container.style.opacity = 0;
+            container.onloadeddata = function() {
+                this.style.opacity = 1;
+            }
+            container.onended = function() {
+                if(ean.waitVideoEnd && ean.status === 'waiting') {
+                    this.style.opacity = 0;
+                    ean.start();
+                }
+            }
+        break;
+    }
+    return container;
 }

@@ -137,16 +137,10 @@ class eAutoNext {
         try {
             this.status = 'playing';
             const interval = this.secBeforeNext * 1000;
-            const onNextPost = async () => {
-                await this.getNextPost();
-                this.onnext(this.previousPost, this.currentPost, this.nextPost);
-                if(this.currentPost?.file.ext === 'webm' && this.waitVideoEnd) {
-                    this.pause();
-                    this.status = "waiting";
-                }
-            }
-            onNextPost();
-            this.#interval = setInterval(onNextPost, interval);
+            await this.next();
+            this.#interval = setInterval(() => {
+                this.next();
+            }, interval);
         } catch(e) {
             console.log("Unable to start:",e);
             throw e;
@@ -158,7 +152,7 @@ class eAutoNext {
         if(this.#timeout)
             clearTimeout(this.#timeout);
         if(this.#interval)
-        clearInterval(this.#interval);
+            clearInterval(this.#interval);
     }
 
     async stop() {
@@ -166,6 +160,15 @@ class eAutoNext {
         if(this.#interval) {
             clearInterval(this.#interval);
             console.log("Stopped AutoNext");
+        }
+    }
+
+    async next() {
+        await this.getNextPost();
+        this.onnext(this.previousPost, this.currentPost, this.nextPost);
+        if(this.currentPost?.file.ext === 'webm' && this.waitVideoEnd) {
+            this.pause();
+            this.status = "waiting";
         }
     }
 }

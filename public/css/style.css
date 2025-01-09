@@ -5,6 +5,11 @@
     background:rgba(255,255,255,0.25);
     border-radius:1em;
 }
+
+[data-theme=dark] {
+    --pico-background-color: #1b1b1b;
+}
+
 main {
     padding:0;
     padding-block:0 !important;
@@ -71,6 +76,8 @@ div.autoNextPostPreview video
     transition: opacity 0.2s linear;
     max-width:100%;
     border-radius:1em;
+    box-shadow: 10px 10px 10px 0px rgba(0,0,0,0.3),
+        -5px -5px 10px 5px rgba(255,255,255,0.05);
 }
 
 div.autoNextMain div.autoNextCurrentPostFooter {
