@@ -2,9 +2,11 @@ class eAutoNext {
 
     #baseUrl = "https://e621.net";
     #interval;
+    #timeout;
     previousPost;
     currentPost;
     nextPost;
+    status = "idle";
 
     onnext = (currentPost) => {};
 
@@ -37,6 +39,8 @@ class eAutoNext {
 
             this.waitVideoEnd = !!opt.waitVideoEnd;
             this.secBeforeNext = parseInt(opt.secBeforeNext);
+            this.muteVideos = !!opt.muteVideos;
+            this.showControls = !!opt.showControls;
 
             this.tags = opt.tags ?? "";
             if(!this.ratingS) this.tags += " -rating:s";
@@ -131,12 +135,14 @@ class eAutoNext {
 
     async start() {
         try {
+            this.status = 'playing';
             const interval = this.secBeforeNext * 1000;
             const onNextPost = async () => {
                 await this.getNextPost();
                 this.onnext(this.previousPost, this.currentPost, this.nextPost);
                 if(this.currentPost?.file.ext === 'webm' && this.waitVideoEnd) {
-                    
+                    this.pause();
+                    this.status = "waiting";
                 }
             }
             onNextPost();
@@ -147,7 +153,16 @@ class eAutoNext {
         }
     }
 
+    async pause() {
+        this.status = 'paused';
+        if(this.#timeout)
+            clearTimeout(this.#timeout);
+        if(this.#interval)
+        clearInterval(this.#interval);
+    }
+
     async stop() {
+        this.status = 'idle';
         if(this.#interval) {
             clearInterval(this.#interval);
             console.log("Stopped AutoNext");

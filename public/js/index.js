@@ -3,7 +3,7 @@
     globalThis.config = await req.json();
     
     window.onresize = () => {
-        if(ean) refreshPostPreview();
+        if(ean) resizePreview();
     };
 
     document.querySelector("button.hideOptions").addEventListener("click", function() {
@@ -39,6 +39,19 @@
         }
     });
 
+    document.querySelector("input.pauseAutoNext").addEventListener("click", function(e) {
+        if(!ean) return;
+        switch(ean.status) {
+            case 'paused':
+                ean.start();
+            break;
+            case 'playing':
+            case 'waiting':
+                ean.pause();
+            break;
+        }
+    });
+
     if(localStorage.eAutoNext) {
         document.querySelectorAll(`input[type=checkbox]`).forEach(el => el.checked = false);
         const data = JSON.parse(localStorage.eAutoNext);
@@ -60,6 +73,10 @@
 
 function startAutoNext() {
     ean.onnext = refreshPostPreview;
+    const controlsContainer = document.querySelector(".autoNextCurrentPostFooter ");
+    controlsContainer.querySelector("input.previousPost").disabled = ean.previousPost ? true : false;
+    controlsContainer.querySelector("input.nextPost").disabled = ean.nextPost ? true : false;
+    controlsContainer.querySelector("input.pauseAutoNext").disabled = false;
     ean.start();
 }
 
@@ -90,17 +107,37 @@ function refreshPostPreview() {
             container = document.createElement("video");
             container.type = "video/webm";
             container.autoplay = true;
-            container.loop = true;
+            container.loop = !ean.waitVideoEnd;
+            container.muted = ean.muteVideos;
+            container.controls = ean.showControls;
             let source = document.createElement("source");
             source.src = currentPost.file.url;
             container.appendChild(source);
+            container.style.opacity = 0;
+            container.onloadeddata = function() {
+                this.style.opacity = 1;
+            }
+            container.onended = function() {
+                if(ean.waitVideoEnd && ean.status === 'waiting') {
+                    this.style.opacity = 0;
+                    ean.start();
+                }
+            }
         break;
     }
-    container.style['max-height'] = previewContainer.offsetHeight + 'px';
-    container.style['max-width'] = previewContainer.offsetWidth + 'px';
     previewContainer.appendChild(container);
+    resizePreview();
+}
+
+function resizePreview() {
+    const previewContainer = document.querySelector(".autoNextPostPreview");
+    const preview = previewContainer.querySelector("img, video");
+    preview.style.display = 'none';
+    preview.style['max-height'] = previewContainer.offsetHeight + 'px';
+    preview.style['max-width'] = previewContainer.offsetWidth + 'px';
+    preview.style.display = '';
 }
 
 function genPreview(post) {
-    
+
 }
