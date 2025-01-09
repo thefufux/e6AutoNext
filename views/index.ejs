@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/pico.blue.min.css">
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="shortcut icon" href="/img/e621-logo.png" type="image/png">
+        <title>e621 Auto Next</title>
+    </head>
+    <body>
+        <main>
+            <div class="autoNextContainer">
+                <div class="autoNextOptions">
+                    <form class="autoNextForm">
+                        <div class="autoNextFormHeader">
+                            <nav>
+                                <ul>
+                                    <li><img src="/img/e621-logo.png" width="64"></li>
+                                    <li><h2>Auto Next</h2></li>
+                                </ul>
+                                <ul>
+                                    <li><button type="button" class="hideOptions">x</button></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="autoNextFormBody">
+                            <fieldset>
+                                <span class="errors" style="color:red"></span>
+                            </fieldset>
+                            <fieldset>
+                                <details closed>
+                                    <summary>Start Here</summary>
+                                    <label for="username">
+                                        Your e621 Username:
+                                        <input
+                                            type="text"
+                                            placeholder="Your username"
+                                            id="username"
+                                            name="username"
+                                            required
+                                        >
+                                    </label>
+                                    <label for="apiKey">
+                                        Your Api Key (found in <a href="https://e621.net/users/home" target="_blank">Account > Manage API Access</a>):
+                                        <input
+                                            type="password"
+                                            placeholder="Your api key"
+                                            id="apiKey"
+                                            name="apiKey"
+                                            required
+                                        >
+                                    </label>
+                                </details>
+                            </fieldset>
+                            <hr>
+                            <fieldset>
+                                <label for="tags">
+                                    Tags:
+                                    <input
+                                        type="text"
+                                        id="tags"
+                                        name="tags"
+                                        placeholder="Tags to search..."
+                                    >
+                                    <small><a
+                                            href="https://e621.net/tags"
+                                            target="_blank"
+                                        >Tags List</a> | <a
+                                            href="https://e621.net/help/cheatsheet"
+                                            target="_blank"
+                                        >Cheatsheet List
+                                    </a></small>
+                                </label>
+                            </fieldset>
+                            <fieldset class="grid">
+                                <div>
+                                    Ratings:
+                                    <label for="ratingS">
+                                        <input
+                                            type="checkbox"
+                                            id="ratingS"
+                                            name="ratingS"
+                                            checked
+                                        ><span style="color:green">Safe</span>
+                                    </label>
+                                    <label for="ratingQ">
+                                        <input
+                                            type="checkbox"
+                                            id="ratingQ"
+                                            name="ratingQ"
+                                            checked
+                                        ><span style="color:orange">Questionable</span>
+                                    </label>
+                                    <label for="ratingE">
+                                        <input
+                                            type="checkbox"
+                                            id="ratingE"
+                                            name="ratingE"
+                                            checked
+                                        ><span style="color:red">Explicit</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    Types:
+                                    <label for="images">
+                                        <input
+                                            type="checkbox"
+                                            id="images"
+                                            name="images"
+                                            checked
+                                        > Images
+                                    </label>
+                                    <label for="animated">
+                                        <input
+                                            type="checkbox"
+                                            id="animated"
+                                            name="animated"
+                                            checked
+                                        > Animated
+                                    </label>
+                                    <label for="videos">
+                                        <input
+                                            type="checkbox"
+                                            id="videos"
+                                            name="videos"
+                                            checked
+                                        > Videos
+                                    </label>
+                                </div>
+                            </fieldset>
+                            <hr>
+                            <fieldset class="">
+                                <details>
+                                    <summary>Options</summary>
+                                    <div class="grid">
+                                        Videos:
+                                        <label for="waitVideoEnd">
+                                            <input
+                                                type="checkbox"
+                                                id="waitVideoEnd"
+                                                name="waitVideoEnd"
+                                                checked
+                                            > Wait video end before next post
+                                        </label>
+                                        <label for="muteVideos">
+                                            <input
+                                                type="checkbox"
+                                                id="muteVideos"
+                                                name="muteVideos"
+                                                checked
+                                            > Mute Videos
+                                        </label>
+                                    </div>
+                                    <label for="minScore">
+                                        Minimum score:
+                                        <input
+                                            type="number"
+                                            placeholder="Minimum score"
+                                            id="minScore"
+                                            name="minScore"
+                                        >
+                                        <small>Empty for all posts</small>
+                                    </label>
+                                    <label for="secBeforeNext">
+                                        Seconds before next:
+                                        <input
+                                            type="number"
+                                            min="<%= global.rateLimit %>"
+                                            value="30"
+                                            id="secBeforeNext"
+                                            name="secBeforeNext"
+                                            placeholder="Seconds before next"
+                                            required
+                                        >
+                                        <small>Seconds to reach before next post</small>
+                                    </label>
+                                </details>
+                            </fieldset>
+                        </div>
+                        <div class="autoNextFormFooter">
+                            <input type="submit" value="Start/Update">
+                        </div>
+                    </form>
+                </div>
+                <div class="autoNextMain">
+                    <div class="autoNextCurrentPostHeader">
+                        <div class="autoNextPostName"></div>
+                    </div>
+                    <div class="autoNextCurrentPostBody">
+                        <div class="autoNextPostPreview"></div>
+                    </div>
+                    <div class="autoNextCurrentPostFooter grid">
+                        <input
+                            type="button"
+                            value="Previous"
+                            class="previousPost"
+                            disabled
+                        >
+                        <input
+                            type="button"
+                            value="Next"
+                            class="nextPost"
+                            disabled
+                        >
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
+
+<script src="/js/index.js"></script>
+<script src="/js/eAutoNext.js"></script>

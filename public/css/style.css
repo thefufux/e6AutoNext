@@ -1,0 +1,78 @@
+::-webkit-scrollbar {
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background:rgba(255,255,255,0.25);
+    border-radius:1em;
+}
+main {
+    padding:0;
+    padding-block:0 !important;
+    margin:0;
+    width:100%;
+}
+div.autoNextContainer {
+    display:flex;
+    height: 100vh;
+}
+
+div.autoNextOptions {
+    width:50%;
+    overflow:auto;
+    transition: width .2s linear;
+}
+form.autoNextForm {
+    display:flex;
+    padding:0 1em;
+    flex-direction: column;
+    height:100%;
+}
+div.autoNextFormBody {
+    overflow: auto;
+    padding-right:1em;
+    margin-bottom:1em;
+    flex:1;
+}
+
+div.autoNextMain {
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    flex:1;
+}
+
+div.autoNextPostPreview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+div.autoNextPostPreview:empty:after {
+    display:block;
+    content:"Idle";
+    color:currentColor;
+    opacity:0.5;
+}
+
+div.autoNextMain div.autoNextCurrentPostBody {
+    flex:1;
+    box-sizing: border-box;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+}
+
+div.autoNextPostPreview img,
+div.autoNextPostPreview video
+{
+    transition: opacity 0.2s linear;
+    max-width:100%;
+    border-radius:1em;
+}
+
+div.autoNextMain div.autoNextCurrentPostFooter {
+    padding:1em;
+}

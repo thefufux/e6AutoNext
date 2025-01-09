@@ -1,0 +1,16 @@
+{
+  "name": "eautonext",
+  "version": "1.0.0",
+  "description": "Software that allows you to have your hands free to navigate in an e621 search",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "author": "thefufux",
+  "license": "ISC",
+  "dependencies": {
+    "@ladjs/consolidate": "^1.0.4",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
+}
