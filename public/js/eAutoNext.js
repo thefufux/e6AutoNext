@@ -1,6 +1,9 @@
 class eAutoNext {
 
-    #baseUrl = "https://e621.net";
+    /**
+     * The root url of e621 (can be e926 or e6ai for exemple)
+     */
+    #baseUrl;
     #interval;
     #timeout;
     previousPost;
@@ -21,14 +24,26 @@ class eAutoNext {
 
     initialize(opt) {
         try {
-            if(!opt.username) throw 'Empty username';
-            if(!opt.apiKey) throw 'Empty api key';
+            if(!opt.website) throw 'Please, select a website';
+            switch(opt.website) {
+                case 'e621':
+                    if(!opt.e621Username) throw 'Empty username';
+                    if(!opt.e621ApiKey) throw 'Empty api key';
+                    this.#baseUrl = 'https://e621.net';
+                    this.username = opt.e621Username;
+                    this.apiKey = opt.e621ApiKey;
+                break;
+                case 'e6ai':
+                    if(!opt.e6aiUsername) throw 'Empty username';
+                    if(!opt.e6aiApiKey) throw 'Empty api key';
+                    this.#baseUrl = 'https://e6ai.net';
+                    this.username = opt.e6aiUsername;
+                    this.apiKey = opt.e6aiApiKey;
+                break;
+            }
             if(!opt.ratingS && !opt.ratingQ && !opt.ratingE) throw 'Select at least one post rating';
             if(!opt.images && !opt.animated && !opt.videos) throw 'Select at least one post type';
             if(!opt.secBeforeNext) throw 'Seconds before next post is not set';
-
-            this.username =     opt.username;
-            this.apiKey =       opt.apiKey;
 
             this.ratingS =      !!opt.ratingS;
             this.ratingQ =      !!opt.ratingQ;
@@ -76,7 +91,7 @@ class eAutoNext {
                 "Authorization":"Basic " + btoa(`${this.username}:${this.apiKey}`),
                 "User-Agent":`${config.appname}/${config.version} (by ${config.author} on e621)`
             });
-            console.log("New Request:", this.#baseUrl + "/posts.json?" + queryParams);
+            console.log("New Request:", this.#baseUrl + "/posts.json?" + queryParams, [...headers]);
             const response = await fetch(this.#baseUrl + "/posts.json?" + queryParams, {
                 method: "GET",
                 mode: "cors",
@@ -85,8 +100,8 @@ class eAutoNext {
             });
             return await response.json();
         } catch(e) {
-            console.warn(`Unable to request e621.net:`, e);
-            throw new Error("An error occured while sending request to e621.net");
+            console.warn(`Unable to request ${this.#baseUrl}:`, e);
+            throw new Error(`An error occured while sending request to ${this.#baseUrl}`);
         }
     }
 

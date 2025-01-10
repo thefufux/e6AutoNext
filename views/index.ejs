@@ -23,34 +23,66 @@
                                     <li><button type="button" class="hideOptions">x</button></li>
                                 </ul>
                             </nav>
+                            <span class="errors" style="color:red"></span>
                         </div>
                         <div class="autoNextFormBody">
                             <fieldset>
-                                <span class="errors" style="color:red"></span>
-                            </fieldset>
-                            <fieldset>
                                 <details closed>
                                     <summary>Start Here</summary>
-                                    <label for="username">
-                                        Your e621 Username:
-                                        <input
-                                            type="text"
-                                            placeholder="Your username"
-                                            id="username"
-                                            name="username"
-                                            required
+                                    <label for="website">
+                                        Site:
+                                        <select
+                                            name="website"
+                                            id="website"
                                         >
+                                            <option value="e621">e621.net (regular)</option>
+                                            <option value="e6ai">e6ai.net (artificial intelligence)</option>
+                                        </select>
                                     </label>
-                                    <label for="apiKey">
-                                        Your Api Key (found in <a href="https://e621.net/users/home" target="_blank">Account > Manage API Access</a>):
-                                        <input
-                                            type="password"
-                                            placeholder="Your api key"
-                                            id="apiKey"
-                                            name="apiKey"
-                                            required
-                                        >
-                                    </label>
+                                    <div class="e621Cred">
+                                        <label for="e621Username">
+                                            Your e621 Username:
+                                            <input
+                                                type="text"
+                                                placeholder="Your username"
+                                                id="e621Username"
+                                                name="e621Username"
+                                                required
+                                            >
+                                        </label>
+                                        <label for="e621ApiKey">
+                                            Your Api Key (found in <a href="https://e621.net/users/home" target="_blank">Account > Manage API Access</a>):
+                                            <input
+                                                type="password"
+                                                placeholder="Your api key"
+                                                id="e621ApiKey"
+                                                name="e621ApiKey"
+                                                required
+                                            >
+                                        </label>
+                                    </div>
+                                    <div class="e6aiCred">
+                                        <label for="e6aiUsername">
+                                            Your e6ai Username:
+                                            <input
+                                                type="text"
+                                                placeholder="Your username"
+                                                id="e6aiUsername"
+                                                name="e6aiUsername"
+                                                required
+                                            >
+                                        </label>
+                                        <label for="e6aiApiKey">
+                                            Your Api Key (found in <a href="https://e6ai.net/users/home" target="_blank">Account > Manage API Access</a>):
+                                            <input
+                                                type="password"
+                                                placeholder="Your api key"
+                                                id="e6aiApiKey"
+                                                name="e6aiApiKey"
+                                                required
+                                            >
+                                        </label>
+                                    </div>
                                 </details>
                             </fieldset>
                             <hr>

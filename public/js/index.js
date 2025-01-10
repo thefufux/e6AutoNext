@@ -11,10 +11,30 @@
         target.style.width = 0;
     });
 
+    document.querySelector("select#website").addEventListener('change', function() {
+        const options = document.querySelector(`.autoNextOptions`);
+        switch(this.value) {
+            case 'e6ai':
+                options.querySelector('.e621Cred').style.display = 'none';
+                options.querySelector('.e6aiCred').style.display = '';
+                options.querySelectorAll('.e621Cred input').forEach(el => el.required = false);
+                options.querySelectorAll('.e6aiCred input').forEach(el => el.required = true);
+            break;
+            case 'e621':
+            default:
+                options.querySelector('.e621Cred').style.display = '';
+                options.querySelector('.e6aiCred').style.display = 'none';
+                options.querySelectorAll('.e621Cred input').forEach(el => el.required = true);
+                options.querySelectorAll('.e6aiCred input').forEach(el => el.required = false);
+            break;
+        }
+    });
+
     document.querySelector(".autoNextForm").addEventListener("submit", async function(e) {
         e.preventDefault();
+        const errors = document.querySelector(".errors");
+        errors.innerHTML = "";
         try {
-            const errors = document.querySelector(".errors");
             const formData = new FormData(this);
             const formEntries = Object.fromEntries(formData.entries());
             if(window.ean) {
@@ -53,21 +73,27 @@
     });
 
     if(localStorage.eAutoNext) {
-        document.querySelectorAll(`input[type=checkbox]`).forEach(el => el.checked = false);
+        const options = document.querySelector(`.autoNextOptions`);
+        options.querySelectorAll(`input[type=checkbox]`).forEach(el => el.checked = false);
         const data = JSON.parse(localStorage.eAutoNext);
-        Object.keys(data).forEach(key => {
-            const input = document.querySelector(`[name=${key}]`);
+        for(let [key, value] of Object.entries(data)) {
+            const input = options.querySelector(`[name=${key}]`);
+            if(!input) continue;
             switch(input.type) {
-                case 'text':
-                case 'password':
-                case 'number':
-                    input.value = data[key];
-                break;
                 case 'checkbox':
                     input.checked = true;
                 break;
+                default:
+                    input.value = value;
+                break;
             }
-        });
+        }
+        options.querySelector('select#website').dispatchEvent(
+            new InputEvent('change', {
+                bubbles: true,
+                cancelable: true
+            })
+        );
     }
 })();
 

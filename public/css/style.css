@@ -32,6 +32,9 @@ form.autoNextForm {
     flex-direction: column;
     height:100%;
 }
+div.autoNextFormHeader {
+    padding-bottom:1em;
+}
 div.autoNextFormBody {
     overflow: auto;
     padding-right:1em;
