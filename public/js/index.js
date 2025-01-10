@@ -72,30 +72,78 @@
         }
     });
 
-    if(localStorage.eAutoNext) {
-        const options = document.querySelector(`.autoNextOptions`);
-        options.querySelectorAll(`input[type=checkbox]`).forEach(el => el.checked = false);
-        const data = JSON.parse(localStorage.eAutoNext);
-        for(let [key, value] of Object.entries(data)) {
-            const input = options.querySelector(`[name=${key}]`);
-            if(!input) continue;
-            switch(input.type) {
-                case 'checkbox':
-                    input.checked = true;
-                break;
-                default:
-                    input.value = value;
-                break;
-            }
+    document.querySelector("input.openSaveConfigModal").addEventListener("click", function(e) {
+        const modal = document.querySelector("dialog.saveConfigModal");
+        modal.open = true;
+        const input = modal.querySelector("input.saveConfigName");
+        input.focus();
+    });
+
+    document.querySelector("dialog.saveConfigModal button.cancelSaveConfig").addEventListener("click", resetSaveConfigModal);
+
+    document.querySelector("dialog.saveConfigModal button.saveConfig").addEventListener("click", function(e) {
+        const modal = document.querySelector("dialog.saveConfigModal");
+        const input = modal.querySelector("input.saveConfigName");
+        if(!input.value) {
+            input.setAttribute('aria-invalid', true);
+            const errors = modal.querySelector('.errors');
+            errors.innerText = "Please, provide a name to your config";
+            return;
         }
-        options.querySelector('select#website').dispatchEvent(
-            new InputEvent('change', {
-                bubbles: true,
-                cancelable: true
-            })
-        );
-    }
+        input.setAttribute('aria-invalid', false);
+
+        if(!localStorage.configs) localStorage.configs = '[]';
+
+        const form = document.querySelector('form.autoNextForm');
+        const formData = new FormData(form);
+        const config = Object.fromEntries(formData.entries());
+        const currentConfigs = JSON.parse(localStorage.configs);
+        currentConfigs.push({
+            name:input.value,
+            created_at:new Date().toJSON(),
+            config
+        });
+        localStorage.configs = JSON.stringify(currentConfigs);
+        setTimeout(() => {
+            resetSaveConfigModal();
+        }, 500);
+    });
+
+    if(localStorage.eAutoNext)
+        loadConfig(JSON.parse(localStorage.eAutoNext));
 })();
+
+function resetSaveConfigModal() {
+    const modal = document.querySelector("dialog.saveConfigModal");
+    const input = modal.querySelector("input.saveConfigName");
+    const errors = modal.querySelector('.errors');
+    modal.open = false;
+    input.removeAttribute('aria-invalid');
+    errors.innerText = "";
+}
+
+function loadConfig(config) {
+    const options = document.querySelector(`.autoNextOptions`);
+    options.querySelectorAll(`input[type=checkbox]`).forEach(el => el.checked = false);
+    for(let [key, value] of Object.entries(config)) {
+        const input = options.querySelector(`[name=${key}]`);
+        if(!input) continue;
+        switch(input.type) {
+            case 'checkbox':
+                input.checked = true;
+            break;
+            default:
+                input.value = value;
+            break;
+        }
+    }
+    options.querySelector('select#website').dispatchEvent(
+        new InputEvent('change', {
+            bubbles: true,
+            cancelable: true
+        })
+    );
+}
 
 function startAutoNext() {
     ean.onnext = refreshPostPreview;

@@ -91,7 +91,6 @@ class eAutoNext {
                 "Authorization":"Basic " + btoa(`${this.username}:${this.apiKey}`),
                 "User-Agent":`${config.appname}/${config.version} (by ${config.author} on e621)`
             });
-            console.log("New Request:", this.#baseUrl + "/posts.json?" + queryParams, [...headers]);
             const response = await fetch(this.#baseUrl + "/posts.json?" + queryParams, {
                 method: "GET",
                 mode: "cors",

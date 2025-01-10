@@ -26,9 +26,9 @@
                             <span class="errors" style="color:red"></span>
                         </div>
                         <div class="autoNextFormBody">
-                            <fieldset>
-                                <details closed>
-                                    <summary>Start Here</summary>
+                            <details closed>
+                                <summary role="button">Start Here</summary>
+                                <fieldset>
                                     <label for="website">
                                         Site:
                                         <select
@@ -38,6 +38,7 @@
                                             <option value="e621">e621.net (regular)</option>
                                             <option value="e6ai">e6ai.net (artificial intelligence)</option>
                                         </select>
+                                        <small>Choose the site to use for posts</small>
                                     </label>
                                     <div class="e621Cred">
                                         <label for="e621Username">
@@ -83,8 +84,8 @@
                                             >
                                         </label>
                                     </div>
-                                </details>
-                            </fieldset>
+                                </fieldset>
+                            </details>
                             <hr>
                             <fieldset>
                                 <label for="tags">
@@ -95,12 +96,16 @@
                                         name="tags"
                                         placeholder="Tags to search..."
                                     >
-                                    <small><a
+                                    <small>
+                                        Use tags like you're on the website. All tags works
+                                         | <a
                                             href="https://e621.net/tags"
                                             target="_blank"
+                                            class="secondary"
                                         >Tags List</a> | <a
                                             href="https://e621.net/help/cheatsheet"
                                             target="_blank"
+                                            class="secondary"
                                         >Cheatsheet List
                                     </a></small>
                                 </label>
@@ -113,6 +118,7 @@
                                             type="checkbox"
                                             id="ratingS"
                                             name="ratingS"
+                                            role="switch"
                                             checked
                                         ><span style="color:green">Safe</span>
                                     </label>
@@ -121,6 +127,7 @@
                                             type="checkbox"
                                             id="ratingQ"
                                             name="ratingQ"
+                                            role="switch"
                                             checked
                                         ><span style="color:orange">Questionable</span>
                                     </label>
@@ -129,6 +136,7 @@
                                             type="checkbox"
                                             id="ratingE"
                                             name="ratingE"
+                                            role="switch"
                                             checked
                                         ><span style="color:red">Explicit</span>
                                     </label>
@@ -140,6 +148,7 @@
                                             type="checkbox"
                                             id="images"
                                             name="images"
+                                            role="switch"
                                             checked
                                         > Images
                                     </label>
@@ -148,6 +157,7 @@
                                             type="checkbox"
                                             id="animated"
                                             name="animated"
+                                            role="switch"
                                             checked
                                         > Animated
                                     </label>
@@ -156,15 +166,16 @@
                                             type="checkbox"
                                             id="videos"
                                             name="videos"
+                                            role="switch"
                                             checked
                                         > Videos
                                     </label>
                                 </div>
                             </fieldset>
                             <hr>
-                            <fieldset class="">
-                                <details>
-                                    <summary>Options</summary>
+                            <details>
+                                <summary class="secondary" role="button">Options</summary>
+                                <fieldset class="">
                                     <div class="grid">
                                         Videos:
                                         <label for="waitVideoEnd">
@@ -215,7 +226,20 @@
                                         >
                                         <small>Seconds to reach before next post</small>
                                     </label>
-                                </details>
+                                </fieldset>
+                            </details>
+                            <hr>
+                            <fieldset class="grid">
+                                <input
+                                    type="button"
+                                    class="secondary openSaveConfigModal"
+                                    value="Save Config"
+                                >
+                                <input
+                                    type="button"
+                                    class="secondary openLoadConfigModal"
+                                    value="Load Config"
+                                >
                             </fieldset>
                         </div>
                         <div class="autoNextFormFooter">
@@ -252,6 +276,31 @@
                     </div>
                 </div>
             </div>
+            <dialog class="saveConfigModal">
+                <article>
+                    <header>
+                        <p>
+                            <strong>Choose a name for your config:</strong>
+                        </p>
+                    </header>
+                    <input
+                        type="text"
+                        placeholder="My Awesome Config!"
+                        class="saveConfigName"
+                        aria-describedby="invalid-configName"
+                    ><small class="errors" id="invalid-configName"></small>
+                    <footer>
+                        <button
+                            class="secondary cancelSaveConfig"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            class="saveConfig"
+                        >Confirm</button>
+                    </footer>
+                </article>
+            </dialog>
         </main>
     </body>
 </html>
