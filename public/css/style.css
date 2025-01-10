@@ -7,7 +7,7 @@
 }
 
 [data-theme=dark] {
-    --pico-background-color: #1b1b1b;
+    --pico-background-color: #040404;
 }
 
 main {
@@ -22,7 +22,7 @@ div.autoNextContainer {
 }
 
 div.autoNextOptions {
-    width:50%;
+    width: 40%;
     overflow:auto;
     transition: width .2s linear;
 }
@@ -84,4 +84,21 @@ div.autoNextPostPreview video
 
 div.autoNextMain div.autoNextCurrentPostFooter {
     padding:1em;
+}
+
+dialog.loadConfigModal tbody {
+    position:relative;
+}
+dialog.loadConfigModal tbody tr:hover td {
+    background-color: var(--pico-secondary-hover-background);
+    color:var(--pico-secondary-inverse);
+    cursor:pointer;
+}
+dialog.loadConfigModal tbody:empty:after {
+    content: "No config saved";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

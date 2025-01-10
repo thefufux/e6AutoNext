@@ -6,7 +6,7 @@
         if(ean) resizePreview();
     };
 
-    document.querySelector("button.hideOptions").addEventListener("click", function() {
+    document.querySelector("a.hideOptions").addEventListener("click", function() {
         const target = document.querySelector(".autoNextOptions");
         target.style.width = 0;
     });
@@ -32,34 +32,10 @@
 
     document.querySelector(".autoNextForm").addEventListener("submit", async function(e) {
         e.preventDefault();
-        const errors = document.querySelector(".errors");
-        errors.innerHTML = "";
-        try {
-            const formData = new FormData(this);
-            const formEntries = Object.fromEntries(formData.entries());
-            if(window.ean) {
-                ean.stop();
-                ean.initialize(formEntries);
-            } else {
-                window.ean = new eAutoNext(formEntries);
-            }
-            const credOk = await ean.checkCredentials();
-
-            document.querySelector(".errors").innerText = "";
-
-            localStorage.eAutoNext = JSON.stringify(formEntries);
-
-            if(!credOk) {
-                delete ean;
-                errors.innerText = "Invalid Credentials";
-            } else startAutoNext();
-        } catch(e) {
-            console.error(e);
-            errors.innerText = e;
-        }
+        initConfig();
     });
 
-    document.querySelector("input.pauseAutoNext").addEventListener("click", function(e) {
+    document.querySelector("input.pauseAutoNext").addEventListener("click", function() {
         if(!ean) return;
         switch(ean.status) {
             case 'paused':
@@ -73,6 +49,7 @@
     });
 
     document.querySelector("input.openSaveConfigModal").addEventListener("click", function(e) {
+        e.target.closest(".dropdown").open = false;
         const modal = document.querySelector("dialog.saveConfigModal");
         modal.open = true;
         const input = modal.querySelector("input.saveConfigName");
@@ -81,7 +58,7 @@
 
     document.querySelector("dialog.saveConfigModal button.cancelSaveConfig").addEventListener("click", resetSaveConfigModal);
 
-    document.querySelector("dialog.saveConfigModal button.saveConfig").addEventListener("click", function(e) {
+    document.querySelector("dialog.saveConfigModal button.saveConfig").addEventListener("click", function() {
         const modal = document.querySelector("dialog.saveConfigModal");
         const input = modal.querySelector("input.saveConfigName");
         if(!input.value) {
@@ -109,9 +86,56 @@
         }, 500);
     });
 
+    document.querySelector("input.openLoadConfigModal").addEventListener("click", function (e) {
+        e.target.closest(".dropdown").open = false;
+        openLoadConfigModal();
+    });
+
+    document.querySelector("dialog.loadConfigModal button.cancelLoadConfig").addEventListener("click", resetLoadConfigModal);
+
+    document.querySelector("dialog.loadConfigModal tbody").addEventListener("click", function(e) {
+        if(!localStorage.configs) return;
+        const { target } = e;
+        const tr = target.closest("tr");
+        const index = tr.dataset['index'];
+        const configs = JSON.parse(localStorage.configs);
+        const config = configs[index];
+        if(!config) return;
+        if([...target.classList].includes("deleteConfig")) {
+            confirm(`Delete "${config.name}"`, `You're going to delete a config named "${config.name}".<br><br>Continue ?`).then(response => {
+                if(response) {
+                    configs.splice(index, 1);
+                    localStorage.configs = JSON.stringify(configs);
+                    openLoadConfigModal();
+                }
+            });
+        } else {
+            loadConfig(config.config);
+            resetLoadConfigModal();
+        }
+    });
+
     if(localStorage.eAutoNext)
         loadConfig(JSON.parse(localStorage.eAutoNext));
 })();
+
+async function confirm(title = "", message = "") {
+    const modal = document.querySelector("dialog.confirmDialog");
+    modal.querySelector('.title').innerHTML = title;
+    modal.querySelector('.body').innerHTML = message;
+    modal.open = true;
+    return new Promise((resolve, reject) => {
+        modal.querySelector('.yes').addEventListener('click', () => {
+            modal.open = false;
+            resolve(true);
+        }, {once:true});
+        modal.querySelector('.no').addEventListener('click', () => {
+            modal.open = false;
+            resolve(false);
+        }, {once:true});
+    })
+
+}
 
 function resetSaveConfigModal() {
     const modal = document.querySelector("dialog.saveConfigModal");
@@ -119,7 +143,34 @@ function resetSaveConfigModal() {
     const errors = modal.querySelector('.errors');
     modal.open = false;
     input.removeAttribute('aria-invalid');
+    input.value = "";
     errors.innerText = "";
+}
+
+function openLoadConfigModal() {
+    const modal = document.querySelector("dialog.loadConfigModal");
+    modal.open = true;
+    if(!localStorage.configs) localStorage.configs = '[]';
+    const configs = JSON.parse(localStorage.configs);
+    const tbody = modal.querySelector("tbody.configsList");
+    tbody.innerHTML = "";
+    configs.forEach((config, index) => {
+        const date = new Date(config.created_at);
+        tbody.innerHTML += `<tr data-index="${index}">
+            <td>${config.name}</td>
+            <td>${date.toLocaleString()}</td>
+            <td>
+                <button class="deleteConfig">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+function resetLoadConfigModal() {
+    const modal = document.querySelector("dialog.loadConfigModal");
+    modal.open = false;
+    const tbody = modal.querySelector("tbody.configsList");
+    tbody.innerHTML = "";
 }
 
 function loadConfig(config) {
@@ -143,6 +194,35 @@ function loadConfig(config) {
             cancelable: true
         })
     );
+}
+
+async function initConfig() {
+    const errors = document.querySelector(".errors");
+    errors.innerHTML = "";
+    try {
+        const form = document.querySelector('form.autoNextForm');
+        const formData = new FormData(form);
+        const formEntries = Object.fromEntries(formData.entries());
+        if(window.ean) {
+            ean.stop();
+            ean.initialize(formEntries);
+        } else {
+            window.ean = new eAutoNext(formEntries);
+        }
+        const credOk = await ean.checkCredentials();
+
+        document.querySelector(".errors").innerText = "";
+
+        localStorage.eAutoNext = JSON.stringify(formEntries);
+
+        if(!credOk) {
+            delete ean;
+            errors.innerText = "Invalid Credentials";
+        } else startAutoNext();
+    } catch(e) {
+        console.error(e);
+        errors.innerText = e;
+    }
 }
 
 function startAutoNext() {
