@@ -9,7 +9,9 @@
 [data-theme=dark] {
     --pico-background-color: #040404;
 }
-
+body, html, main {
+    height:100%;
+}
 main {
     padding:0;
     padding-block:0 !important;
@@ -17,17 +19,38 @@ main {
     width:100%;
 }
 div.autoNextContainer {
-    display:flex;
-    height: 100vh;
+    position: relative;
+    height: 100%;
 }
 
 div.autoNextOptions {
-    width: 40%;
-    overflow:auto;
-    transition: width .2s linear;
+    position: absolute;
+    top:0;
+    left:0;
+    z-index: 1;
+    height: 100%;
+    transform: translate(0, 0);
+    transition: transform 0.3s ease-in-out;
+    width: fit-content;
+    box-shadow: 1px 0 10px -7px #111111;
+    backdrop-filter: blur(1rem);
+}
+div.autoNextOptions.hidden {
+    transform: translate(-100%, 0);
+}
+div.autoNextOptions .showOptions {
+    display:none;
+    position: absolute;
+    top:0;
+    left: 100%;
+    margin: 1em;
+}
+div.autoNextOptions.hidden .showOptions {
+    display:block;
 }
 form.autoNextForm {
     display:flex;
+    overflow: auto;
     padding:0 1em;
     flex-direction: column;
     height:100%;
@@ -35,6 +58,12 @@ form.autoNextForm {
 div.autoNextFormHeader {
     padding-bottom:1em;
 }
+a.menu {
+    mask: url(/img/icons/bars-solid.svg);
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
 div.autoNextFormBody {
     overflow: auto;
     padding-right:1em;
@@ -58,7 +87,7 @@ div.autoNextPostPreview {
 }
 div.autoNextPostPreview:empty:after {
     display:block;
-    content:"Idle";
+    content:"Nothing to show";
     color:currentColor;
     opacity:0.5;
 }
