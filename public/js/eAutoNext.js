@@ -6,12 +6,13 @@ class eAutoNext {
     #baseUrl;
     #interval;
     #timeout;
+    #status = "idle";
     previousPost;
     currentPost;
     nextPost;
-    status = "idle";
 
     onnext = (currentPost) => {};
+    onprevious = (currentPost) => {};
 
     constructor(opt) {
         try {
@@ -104,6 +105,15 @@ class eAutoNext {
         }
     }
 
+    get status() {
+        return this.#status;
+    }
+
+    set status(status) {
+        this.#status = status;
+        if(this.onchangestatus) this.onchangestatus(status);
+    }
+
     async checkCredentials() {
         try {
             await this.request({limit:1});
@@ -151,7 +161,7 @@ class eAutoNext {
         try {
             this.status = 'playing';
             const interval = this.secBeforeNext * 1000;
-            await this.next();
+            if(!this.currentPost) await this.next();
             this.#interval = setInterval(() => {
                 this.next();
             }, interval);
@@ -177,12 +187,31 @@ class eAutoNext {
         }
     }
 
-    async next() {
+    async next(userRequest = false) {
         await this.getNextPost();
         this.onnext(this.previousPost, this.currentPost, this.nextPost);
         if(this.currentPost?.file.ext === 'webm' && this.waitVideoEnd) {
             this.pause();
             this.status = "waiting";
+        }
+        if(!this.nextPost) {
+            this.stop();
+        }
+        if(userRequest) {
+            this.pause();
+            return this.start();
+        }
+    }
+
+    async previous() {
+        await this.getPreviousPost();
+        this.onprevious(this.previousPost, this.currentPost, this.nextPost);
+        if(this.currentPost?.file.ext === 'webm' && this.waitVideoEnd) {
+            this.pause();
+            this.status = "waiting";
+        }
+        if(!this.nextPost) {
+            this.stop();
         }
     }
 }

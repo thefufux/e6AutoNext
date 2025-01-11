@@ -3,6 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
         <link rel="stylesheet" href="/css/pico.blue.min.css">
         <link rel="stylesheet" href="/css/style.css">
         <link rel="shortcut icon" href="/img/e621-logo.png" type="image/png">
@@ -17,7 +20,9 @@
                             <nav>
                                 <ul>
                                     <li>
-                                        <a aria-label="Menu" href="#" class="secondary hideOptions">...</a>
+                                        <a
+                                            href="#" class="secondary hideOptions menu" role="button"
+                                        ></a>
                                     </li>
                                 </ul>
                                 <ul>
@@ -89,7 +94,7 @@
                                             >
                                         </label>
                                     </div>
-                                    <div class="e6aiCred">
+                                    <div class="e6aiCred" style="display:none">
                                         <label for="e6aiUsername">
                                             Your e6ai Username:
                                             <input
@@ -285,6 +290,9 @@
                             <input type="submit" value="Start/Update">
                         </div>
                     </form>
+                    <a
+                        href="#" class="secondary showOptions menu" role="button"
+                    ></a>
                 </div>
                 <div class="autoNextMain">
                     <div class="autoNextCurrentPostHeader">
@@ -302,7 +310,7 @@
                         >
                         <input
                             type="button"
-                            value="Pause"
+                            value="Idle"
                             class="pauseAutoNext"
                             disabled
                         >

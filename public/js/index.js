@@ -3,12 +3,16 @@
     globalThis.config = await req.json();
     
     window.onresize = () => {
-        if(ean) resizePreview();
+        if(window.ean) resizePreview();
     };
 
     document.querySelector("a.hideOptions").addEventListener("click", function() {
         const target = document.querySelector(".autoNextOptions");
-        target.style.width = 0;
+        target.classList.add('hidden');
+    });
+    document.querySelector("a.showOptions").addEventListener("click", function() {
+        const target = document.querySelector(".autoNextOptions");
+        target.classList.remove('hidden');
     });
 
     document.querySelector("select#website").addEventListener('change', function() {
@@ -32,6 +36,8 @@
 
     document.querySelector(".autoNextForm").addEventListener("submit", async function(e) {
         e.preventDefault();
+        const target = document.querySelector(".autoNextOptions");
+        target.classList.add('hidden');
         initConfig();
     });
 
@@ -113,6 +119,13 @@
             loadConfig(config.config);
             resetLoadConfigModal();
         }
+    });
+
+    document.querySelector("input.nextPost").addEventListener("click", function() {
+        ean.next(true);
+    });
+    document.querySelector("input.previousPost").addEventListener("click", function() {
+        ean.previous(true);
     });
 
     if(localStorage.eAutoNext)
@@ -227,6 +240,7 @@ async function initConfig() {
 
 function startAutoNext() {
     ean.onnext = refreshPostPreview;
+    ean.onchangestatus = onChangeStatus;
     ean.start();
 }
 
@@ -246,9 +260,36 @@ function refreshPostPreview() {
         document.querySelector(".errors").innerText = "";
         return ean.stop();
     }
-    const preview = genPreview(currentPost);
-    previewContainer.appendChild(preview);
+    const currentPreview = genPreview(currentPost);
+    previewContainer.appendChild(currentPreview);
+
+    if(nextPost) {
+        const nextPreview = genPreview(nextPost, true);
+        previewContainer.appendChild(nextPreview);
+    }
+
+    if(previousPost) {
+        const previousPreview = genPreview(previousPost, true);
+        previewContainer.appendChild(previousPreview);
+    }
+
     resizePreview();
+}
+
+function onChangeStatus(status) {
+    const input = document.querySelector("input.pauseAutoNext");
+    switch(status) {
+        case 'playing':
+        case 'waiting':
+            input.value = "Pause";
+        break;
+        case 'paused':
+            input.value = "Resume";
+        break;
+        case 'idle':
+            input.value = "Idle";
+        break;
+    }
 }
 
 function resizePreview() {
@@ -260,7 +301,7 @@ function resizePreview() {
     preview.style.display = '';
 }
 
-function genPreview(post) {
+function genPreview(post, preload = false) {
     let container;
     switch(post.file.ext) {
         case 'png':
@@ -269,9 +310,10 @@ function genPreview(post) {
             container = document.createElement("img");
             container.src = post.file.url;
             container.style.opacity = 0;
-            container.onload = function() {
-                this.style.opacity = 1;
-            }
+            if(!preload)
+                container.onload = function() {
+                    this.style.opacity = 1;
+                }
         break;
         case 'webm':
             container = document.createElement("video");
@@ -284,16 +326,22 @@ function genPreview(post) {
             source.src = post.file.url;
             container.appendChild(source);
             container.style.opacity = 0;
-            container.onloadeddata = function() {
-                this.style.opacity = 1;
-            }
-            container.onended = function() {
-                if(ean.waitVideoEnd && ean.status === 'waiting') {
-                    this.style.opacity = 0;
-                    ean.start();
+            if(!preload) {
+                container.onloadeddata = function() {
+                    this.style.opacity = 1;
+                }
+                container.onended = function() {
+                    if(ean.waitVideoEnd && ean.status === 'waiting') {
+                        this.style.opacity = 0;
+                        ean.start();
+                    }
                 }
             }
         break;
+    }
+    if(preload) {
+        container.style.width = 0;
+        container.style.height = 0;
     }
     return container;
 }
