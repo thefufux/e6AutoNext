@@ -6,6 +6,13 @@
     border-radius:1em;
 }
 
+@media only screen and (hover: none) and (pointer: coarse) {
+    ::-webkit-scrollbar {
+        display:none;
+    }
+    
+}
+
 [data-theme=dark] {
     --pico-background-color: #040404;
 }

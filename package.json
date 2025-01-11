@@ -1,10 +1,12 @@
 {
-  "name": "eautonext",
+  "name": "e6autonext",
   "version": "1.0.0",
   "description": "Software that allows you to have your hands free to navigate in an e621 search",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "dist": "pkg ."
   },
   "author": "thefufux",
   "license": "ISC",
@@ -12,5 +14,13 @@
     "@ladjs/consolidate": "^1.0.4",
     "ejs": "^3.1.10",
     "express": "^4.21.2"
+  },
+  "pkg": {
+    "assets": [
+      "views/**/*",
+      "public/**/*",
+      "config/config.js"
+    ],
+    "outputPath": "dist"
   }
 }

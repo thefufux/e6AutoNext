@@ -159,6 +159,7 @@ class eAutoNext {
 
     async start() {
         try {
+            console.log("Start", this);
             this.status = 'playing';
             const interval = this.secBeforeNext * 1000;
             if(!this.currentPost) await this.next();
