@@ -10,7 +10,6 @@
     ::-webkit-scrollbar {
         display:none;
     }
-    
 }
 
 [data-theme=dark] {
@@ -119,7 +118,26 @@ div.autoNextPostPreview video
 }
 
 div.autoNextMain div.autoNextCurrentPostFooter {
-    padding:1em;
+    position: relative;
+}
+div.postPreviewOptions {
+    position: absolute;
+    top: 0;
+    right:0;
+    transform: translate(-1em, calc(-100% - 1em));
+}
+div.postPreviewOptions a.hidePostFooter {
+    mask: url(/img/icons/angles-down-solid.svg);
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+div.postPreviewOptions a.hidePostFooter.show {
+    transform: rotate(180deg);
+}
+div.postPreviewOptions  a.toggleFullScreen {
+    mask: url(/img/icons/expand-solid.svg);
+    mask-repeat: no-repeat;
+    mask-position: center;
 }
 
 dialog.loadConfigModal tbody {
